@@ -1,3 +1,8 @@
+CREATE TABLE `DamageComment` (
+   id int auto_increment primary key,
+   commenter int not null,
+   comment TEXT
+);
 
 UPDATE MemberRightType SET member_right = 'kajak_b', description = 'kajakret B' WHERE member_right = '2kajak';
 

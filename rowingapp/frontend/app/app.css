@@ -809,3 +809,48 @@ input.tripcomment {
     color: red;
     background:white;
 }
+
+div.reportFormDiv {
+	border: 3px solid #3ecbbf;
+	border-radius: 10px;
+	padding: 5px;
+	margin-top: 1.5em;
+}
+div.reportFormDiv h3 {
+	color: #3ecbbf;
+	font-size: 10pt;
+	font-weight: bold;
+	border: 3px solid #3ecbbf;
+	border-radius: 1em;
+	height: 2em;
+	padding: 0.2em 0.8em;
+    display: inline-block;
+    widht: auto;
+    position: relative;
+    left: 1.5em;
+    top: -1.2em;
+    background: #f1f2f7;
+    clear: both;
+}
+
+.clear {
+	clear: both;
+}
+div.reportFormDiv div.left {
+	float: left;
+	display: inline-block;
+}
+div.reportFormDiv div.right {
+	margin-left: 3em;
+	display: inline-block;
+	width: auto;
+}
+div.reportFormDiv div.right button {
+	float: right;
+}
+div.reportFormDiv input {
+	min-width: 25em;
+}
+div.reportFormDiv textarea {
+	min-width: 30em;
+}
