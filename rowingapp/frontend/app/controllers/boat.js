@@ -11,11 +11,30 @@ app.controller(
        // Load Category Overview
        $scope.boatcategories = DatabaseService.getBoatTypes();
        // Load selected boats based on boat category
+       $scope.reservations = DatabaseService.getDB('get_reservations');
+       $scope.checkin={update_destination_for:null};
        $scope.critical_time = function (tx) {
-         var t=tx.split(/[- :]/);
-         var et=new Date(t[0], t[1]-1, t[2], t[3]||0, t[4]||0, t[5]||0);
-         return(et< new Date);
+         if (tx) {
+           var t=tx.split(/[- :]/);
+           var et=new Date(t[0], t[1]-1, t[2], t[3]||0, t[4]||0, t[5]||0);
+           return(et< new Date);
+         }
+         return false;
        };    
+
+       // FIXME also in admin, antiduplicate
+       $scope.getTriptypeWithID=DatabaseService.getTriptypeWithID;
+       $scope.weekdays=[
+         {id:0,day:"-"},
+         {id:1,day:"mandag"},
+         {id:2,day:"tirsdag"},
+         {id:3,day:"onsdag"},
+         {id:4,day:"torsdag"},
+         {id:5,day:"fredag"},
+         {id:6,day:"lørdag"},
+         {id:7,day:"søndag"}
+       ];
+
 
        $scope.allboats = DatabaseService.getBoats();
        $scope.levels =DatabaseService.getDB('boatlevels');
@@ -33,11 +52,14 @@ app.controller(
              $scope.checkout.destination=DatabaseService.getDestinationWithName(status.reuse.destination);
              $scope.checkout.distance=$scope.checkout.destination.distance;
              $scope.checkout.boat=DatabaseService.getBoatWithId(status.reuse.boat_id);
+             $scope.checkout.comments=status.reuse.comment;
+             $scope.checkout.starttime=status.reuse.outtime;
+             $scope.checkout.expectedtime=status.reuse.expectedintime;
              $scope.selectedBoatCategory=DatabaseService.getBoatTypeWithName($scope.checkout.boat.category);
              $scope.selectedboats = DatabaseService.getBoatsWithCategoryName($scope.checkout.boat.category);
              $scope.checkout.rowers=[];
-             angular.forEach(status.reuse.rowers,function(name,id,kv) {
-               $scope.checkout.rowers.push(DatabaseService.getRower(id));
+             angular.forEach(status.reuse.rowers,function(kv) {
+               $scope.checkout.rowers.push(DatabaseService.getRower(kv.member_id));
              }
                             );
              $scope.updateExpectedTime();
@@ -83,7 +105,8 @@ app.controller(
          'triptype': null,
          'rowers': ["","","","",""],
          'client_name':DatabaseService.client_name(),
-         'distance':0
+         'distance':0,
+         'comments':''
        };
        $scope.checkouttime_clean=$scope.checkout.starttime;
 
@@ -91,6 +114,15 @@ app.controller(
           $scope.do_boat_category(DatabaseService.lookup('boattypes','name','Inrigger 4+'));
         }
      });
+
+     var has_right = function(right,arg,rightlist) {
+       for (var ri=0; ri<rightlist.length; ri++) {
+         if (rightlist[ri].member_right==right && (!arg || !rightlist[ri].arg || arg==rightlist[ri].arg)) {
+           return true;
+         }
+       }
+       return false;
+     }
 
      $scope.checkRights = function() {
        if (!$scope.checkout) {
@@ -100,20 +132,26 @@ app.controller(
        var boatRequirements=($scope.selectedBoatCategory)?$scope.selectedBoatCategory.rights:[];
        var reqs=DatabaseService.mergeArray(tripRequirements,boatRequirements);
        var norights=[];
+       var subright=null;
+
+       if ($scope.selectedBoatCategory) {
+         subright=$scope.selectedBoatCategory.rights_subtype;
+       }
+       
        angular.forEach(reqs, function(subject,rq) {
            // console.log("check right "+rq);
 	 if (rq=="findIndex") {
 	       // ignore
 	 } else if (subject='cox') {
                if ($scope.checkout.rowers[0] && $scope.checkout.rowers[0].rights)  {
-             if (!(rq in $scope.checkout.rowers[0].rights)) {
-               norights.push("styrmand "+$scope.checkout.rowers[0].name+" har ikke "+ $filter('righttodk')([rq]));
-             }
-           }
+                 if (!(has_right(rq,subright,$scope.checkout.rowers[0].rights))) {
+                   norights.push("styrmand "+$scope.checkout.rowers[0].name+" har ikke "+ $filter('righttodk')([rq]));
+                 }
+               }
 	 } else if (subject='all') {
            for (var ri=0; ri < $scope.checkout.rowers.length; ri++) {
              if (checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
-               if (!(rq in $scope.checkout.rowers[ri].rights)) {
+               if (!(has_right(rq,subright,$scope.checkout.rowers[ri].rights))) {
 		 norights.push($scope.checkout.rowers[ri].name +" har ikke "+$filter('righttodk')([rq]));
                }
              }
@@ -122,7 +160,7 @@ app.controller(
            var ok=false;
            for (var ri=0; ri < $scope.checkout.rowers.length; ri++) {
              if (checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
-               if (!(rq in $scope.checkout.rowers[ri].rights)) {
+               if (!(has_right(rq,subright,$scope.checkout.rowers[ri].rights))) {
 		 ok=true;
                }
              }
@@ -130,11 +168,11 @@ app.controller(
            if (!ok) {
              norights.push(" der skal være mindst een roer med "+ $filter('righttodk')([rq]));
            }
-	 } else if (rq='any') {
+	 } else if (rq='none') {
            var ok=true;
            for (var ri=0; ri < $scope.checkout.rowers.length; ri++) {
              if (checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
-               if (!(rq in $scope.checkout.rowers[ri].rights)) {
+               if (!(has_right(rq,subright,$scope.checkout.rowers[ri].rights))) {
 		 ok=false;
                }
              }
@@ -144,6 +182,59 @@ app.controller(
            }
       }   
        },this);
+
+       // Check reservation
+       // WIP, works for daytrips
+       angular.forEach($scope.reservations, function(rv) {
+         var otime=$scope.checkout.starttime;
+         var etime=$scope.checkout.expectedtime;
+         if ($scope.checkout.triptype && $scope.checkout.boat && $scope.checkout.boat.id==rv.boat_id && etime) {
+           if (rv.dayofweek>0) {
+             // Ugereservering
+             if (etime.getDay()==(rv.dayofweek)) {
+               // var etime="18:13:12.241Z"
+               var st=angular.copy(etime);
+               var et=angular.copy(etime);
+               st.setHours(rv.start_time.split(":")[0]);
+               st.setMinutes(rv.start_time.split(":")[1]);
+               st.setSeconds(0);
+               
+               et.setHours(rv.end_time.split(":")[0]);
+               et.setMinutes(rv.end_time.split(":")[1]);
+               et.setSeconds(0);
+
+               if (!(
+                 rv.triptype_id==$scope.checkout.triptype.id ||
+                   (etime < st && otime < st) ||
+                   (etime > et && otime > et)
+               )
+                  ) {
+                 norights.push(" Båden er reserveret til "+ DatabaseService.getTriptypeWithID(rv.triptype_id).name + " :"+rv.purpose+
+                               " fra "+rv.start_time+" til "+rv.end_time);
+               }             
+             }
+           } else {
+             // kalendereservering
+             var st=rv.start_date + "T"+ rv.start_time;
+             var et=rv.end_date + "T"+ rv.end_time;
+             if (!(
+               rv.triptype_id==$scope.checkout.triptype.id ||
+                 (etime < st && otime < st)||
+                 (etime > et && otime > et)
+             )
+                )
+             {
+               norights.push(" Båden er reserveret til "+ DatabaseService.getTriptypeWithID(rv.triptype_id).name + " :"+rv.purpose+
+                             " fra " +st+" til "+et);
+             }
+           }
+         }
+       },this);
+       
+       if ($scope.checkout.boat && $scope.checkout.boat.damage > 2) {
+	   norights.push(" Båden er svært skadet og må derfor ikke komme på vandet !!!");
+       }
+
        $scope.rightsmessage=norights.join(",");
        return norights.length<1;
      }
@@ -168,7 +259,7 @@ app.controller(
        $scope.destinations = DatabaseService.getDestinations(boat.location);
        $scope.boatdamages = DatabaseService.getDamagesWithBoatId(boat.id);
        if ( (!oldboat && boat.location!=DatabaseService.defaultLocation)  || (oldboat &&  oldboat.location!=boat.location)) {
-	 // Distance have changed, and we do not know if user overrode and accouted for location
+	 // Distance have changed, and we do not know if user overrode and accounted for location
 	 if ($scope.checkout.destination && $scope.checkout.destination.name)
            $scope.checkout.destination=DatabaseService.nameSearch($scope.destinations,$scope.checkout.destination.name);
        }
@@ -221,10 +312,12 @@ app.controller(
   
      $scope.updateExpectedTime = function () {
        if ($scope.checkout.starttime && $scope.checkout.destination) {
-         if($scope.checkout.triptype && $scope.checkout.triptype.name === 'Instruktion' && $scope.checkout.destination.duration_instruction) {
-           $scope.checkout.expectedtime = new Date($scope.checkout.starttime.getTime() + $scope.checkout.destination.duration_instruction * 3600 * 1000)
+         var duration=($scope.checkout.triptype && $scope.checkout.triptype.name === 'Instruktion' && $scope.checkout.destination.duration_instruction)?$scope.checkout.destination.duration_instruction:$scope.checkout.destination.duration;
+
+         if (duration>0) {
+           $scope.checkout.expectedtime = new Date($scope.checkout.starttime.getTime() + duration * 3600 * 1000);
          } else {
-           $scope.checkout.expectedtime = new Date($scope.checkout.starttime.getTime() + $scope.checkout.destination.duration * 3600 * 1000);
+           $scope.checkout.expectedtime = null;
          }
        }
      }
@@ -425,6 +518,13 @@ app.controller(
     }
      }
 
+
+     $scope.update_checkin_destiation = function(d) {
+       $scope.checkin.update_destination_for.destination=d.name;
+       $scope.checkin.update_destination_for.meter=d.distance;
+       $scope.checkin.update_destination_for=null;
+     }
+     
      // Hack to handle when user clicks outside field
      // This really should be handled by better autocomplete.
      $scope.co_rower_leave = function(ix) {
