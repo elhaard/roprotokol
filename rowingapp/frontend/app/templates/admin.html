@@ -323,7 +323,7 @@
         </thead>
         <tbody>
 	  <tr ng-repeat="rr in currentrower.rights" ng-class-odd="'oddboat'" ng-class-even="'evenboat'">
-            <td>{{rr |argrighttodk}}</td>
+            <td>{{rr |argrighttodk }}</td>
             <td>
               <button class="big" ng-click="remove_rower_right(rr,currentrower,$index)">inddrag rettighed</button>
             </td>
@@ -356,6 +356,7 @@
 	  <table>
 	    <body>
 	      <tr><td>Båd</td><td>{{et.current.boat}}</td></tr>
+	      <tr><td>Tur</td><td>{{et.trip}}</td></tr>
 	       <tr><td>Destination</td><td>{{et.current.destination}}</td></tr>
 	       <tr><td>Distance</td><td>{{et.current.distance}}</td></tr>
 	       <tr><td>Ud</td><td>{{et.current.outtime}}</td></tr>
@@ -531,14 +532,20 @@
 
 <div ng-if="do=='misc'">
 
-  Denne terminal hedder  <input ng-model-options="{updateOn:'blur'}"
-                                placeholder="Denne terminal hedder"
-                                class="terminalnavn"
-                                type="text"
-                                ng-model="clientname"
-                                ng_change="set_client_name()"
-                                >
+  <h2>Denne terminal hedder</h2>
+  <input ng-model-options="{updateOn:'blur'}"
+         placeholder="Denne terminal hedder"
+         class="terminalnavn"
+         type="text"
+         ng-model="clientname"
+         ng_change="set_client_name()"
+         >
 
+
+  <h2>Denne terminal håndterer både for disse lokationer</h2>
+
+
+  
   <h2>andre sider</h2>
 
 <p>  Her er sider til oversigter og eksport af data.</p>
@@ -560,6 +567,8 @@
       </ul>
     </li>
     
+    <li><a href="/backend/stats/racerkaniner.php">Statistik for årets racerkaniner som CSV</a></li>
+    <li><a href="/backend/stats/maxmates.php">Årets 10 roere med flest rokammerater som CSV</a></li>
     <li><a href="/backend/stats/longdistancecoxes.php">Langdistancestyrmænd som CSV</a></li>
     <li><a href="http://roprotokol.danskestudentersroklub.dk/public/instruction_stat.php?returnlink=history">Antal instruktører, kaniner og både brugt til instruktion (eksternt link, offentlig adgang)</a></li>
     <li><a href="http://roprotokol.danskestudentersroklub.dk/public/reservations.php">Bådreservationer, som CVS, ekstern offentlig adgang</a></li>

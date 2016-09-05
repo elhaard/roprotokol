@@ -115,9 +115,12 @@ app.controller(
         }
      });
 
-     var has_right = function(right,arg,rightlist) {
+     var has_right = function(required_right,arg,rightlist) {
        for (var ri=0; ri<rightlist.length; ri++) {
-         if (rightlist[ri].member_right==right && (!arg || !rightlist[ri].arg || arg==rightlist[ri].arg)) {
+         // DSR Hack here
+         if ( (rightlist[ri].member_right==required_right ||
+               (required_right=="svava" && rightlist[ri].member_right=="sculler"))
+             && (!arg || !rightlist[ri].arg || arg==rightlist[ri].arg)) {
            return true;
          }
        }
@@ -192,7 +195,6 @@ app.controller(
            if (rv.dayofweek>0) {
              // Ugereservering
              if (etime.getDay()==(rv.dayofweek)) {
-               // var etime="18:13:12.241Z"
                var st=angular.copy(etime);
                var et=angular.copy(etime);
                st.setHours(rv.start_time.split(":")[0]);
@@ -209,7 +211,7 @@ app.controller(
                    (etime > et && otime > et)
                )
                   ) {
-                 norights.push(" Båden er reserveret til "+ DatabaseService.getTriptypeWithID(rv.triptype_id).name + " :"+rv.purpose+
+                 norights.push(rv.boat+" er reserveret til "+ DatabaseService.getTriptypeWithID(rv.triptype_id).name + ": "+rv.purpose+
                                " fra "+rv.start_time+" til "+rv.end_time);
                }             
              }
@@ -224,7 +226,7 @@ app.controller(
              )
                 )
              {
-               norights.push(" Båden er reserveret til "+ DatabaseService.getTriptypeWithID(rv.triptype_id).name + " :"+rv.purpose+
+               norights.push(rv.boat+" er reserveret til "+ DatabaseService.getTriptypeWithID(rv.triptype_id).name + " :"+rv.purpose+
                              " fra " +st+" til "+et);
              }
            }
