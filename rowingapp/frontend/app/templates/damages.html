@@ -12,12 +12,14 @@
   {{match.model.name}} <i>({{match.model.category}})</i>
   </a>
 </script>
+
+
 <div class="reportFormDiv">
   <h3>Meld ny skade</h3> 
   <div class="clear"></div>
   <ng-form name="reportDamage">
   <div class="left">
-     <input placeholder="skriv dit navn her" autocomplete="off" id="anmelder" name="anmelder" type="text" ng-model="newdamage.reporter" typeahead-min-length="3" uib-typeahead="rower as rower.name for rower in getRowerByName($viewValue)" typeahead-template-url="reporterTemplate.html" required />
+     <input placeholder="Skriv dit navn/nummer her" autocomplete="off" id="anmelder" name="anmelder" type="text" ng-model="newdamage.reporter" typeahead-min-length="3" uib-typeahead="rower as rower.name for rower in getRowerByName($viewValue)" typeahead-template-url="reporterTemplate.html" required />
      <br/>
      <input placeholder="Vælg båd" autocomplete="off" id="select_boat" name="name" type="text" ng-model="newdamage.boat" typeahead-min-length="1" uib-typeahead="boat as boat.name for boat in getMatchingBoats($viewValue)" typeahead-template-url="boatTemplate.html" required>
      <br/>
@@ -51,8 +53,8 @@
     <td class="degree">{{bd.degree|damagedegreedk}}</td>
     <td>{{bd.description}}</td>
     <td class="ok">
-     <button ng-click="reportFixDamage(bd,newdamage.reporter,allboatdamages,$index)" class="klar" tooltip-placement="left" uib-tooltip="Kommenter eller skift grad"><i class="fa fa-comment"></i></button>
-     <button ng-click="reportFixDamage(bd,newdamage.reporter,allboatdamages,$index)" class="klar" uib-tooltip="Klarmeld"><i class="fa fa-thumbs-up"></i></button>
+     <button ng-click="fixDamagePopUp('edit',bd)" class="klar" tooltip-placement="left" uib-tooltip="Rediger"><i class="fa fa-edit"></i></button>
+     <button ng-click="fixDamagePopUp('fix',bd)" class="klar" uib-tooltip="Klarmeld"><i class="fa fa-thumbs-up"></i></button>
     </td>
   </tr>
 </table>

@@ -22,9 +22,9 @@ function multifield($fld) {
 //
 // Deprecated uses:
 //    multifield_array($input, 'field1', 'field2')
-function multifield_array($fld,$keys,   $deprecated_valname) {
+function multifield_array($fld,$keys,$deprecated_valname=null) {
   // Handle deprecated call arguments
-  if ($deprecated_valname) {
+  if (isset($deprecated_valname)) {
     if (! is_array($keys)) {
        $keys = [$keys, $deprecated_valname];
     } else {

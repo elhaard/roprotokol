@@ -20,7 +20,7 @@ app.controller(
            return(et< new Date);
          }
          return false;
-       };    
+       };
 
        // FIXME also in admin, antiduplicate
        $scope.getTriptypeWithID=DatabaseService.getTriptypeWithID;
@@ -327,28 +327,67 @@ app.controller(
        $scope.clearDestination = function () {
        //      $scope.checkout.destination = undefined;
      };
-    
-     $scope.reportFixDamage = function (bd,reporter,damagelist,ix) {
+
+     var reportFixDamage = function (action, bd, reporter) {
+       var res;
        // reporter is an argument so that it works when calling from checkout is implementerd
-       if (bd && reporter) {
-	 var data={
-           "damage":bd,
-           "reporter":reporter
-	 }
-	 if (DatabaseService.fixDamage(data)) {
-           damagelist.splice(damagelist.indexOf(bd),1);
-           $scope.newdamage.reporter=null;
-           $scope.allboatdamages = DatabaseService.getDamages();
-           $scope.damagesnewstatus="klarmeldt";
-	 } else {
-           $scope.damagesnewstatus="Database fejl under klarmelding";
-	 }
-       } else {
-	 // FIXME, this does not work when calling from checkout is implementerd
-	 $scope.damagesnewstatus="du skal angive, hvem du er";
+       if (! (bd && reporter && action)) {
+         throw new Error("You must give action, bd and reporter to reportFixDamage");
        }
+       if (action !== 'edit' && action !== 'fix') {
+         throw new Error("Action must be 'edit' or 'fix'");
+       }
+       var data={
+         "action": action,
+         "damage":bd,
+         "reporter":reporter,
+       };
+       return DatabaseService.fixDamage(data).then( function(fix_res) {
+         console.log("fix_res", fix_res, typeof(fix_res));
+         if (fix_res.success) {
+           $scope.allboatdamages = DatabaseService.getDamages();
+           res = { "success": true, "msg": "klarmeldt"};
+         } else {
+           res = { "success": false, "msg": fix_res.error };
+         }
+         return res;
+       });
      };
-     
+
+     $scope.fixDamagePopUp = function( action, bd ) {
+        var dialog;
+        $scope.fixdamage = angular.extend({},bd,{
+            action: action,
+            cancel: function(){ dialog.close() }
+          });
+        if (action === 'edit') {
+          $scope.fixdamage.comment = bd.description;
+        }
+        $scope.fixdamage.degree = '' + $scope.fixdamage.degree; // cast to string for select to work.
+        $scope.fixdamage.submit = function() {
+          var fd = $scope.fixdamage;
+          var bd = {  id: fd.id,
+                      boat_id: fd.boat_id,
+                      comment: fd.comment,
+                      degree: Number(fd.degree)
+                   };
+          reportFixDamage(fd.action, bd, fd.fixer).then( function(res){
+            if (res.success) {
+               dialog.close();
+               $scope.damagenewstatus = 'Skaden er ' + (action === 'fix') ? 'klarmeldt' : 'opdateret';
+            } else {
+              console.error(res.msg);
+              $scope.fixdamage.errormsg = res.msg;
+            }
+          });
+        };
+
+        dialog = ngDialog.open( { template: 'templates/boat/_fixdamage.html',
+                                  className: 'ngdialog-theme-default',
+                                  scope: $scope });
+
+     };
+
      $scope.reportDamageForBoat = function (damage) {
        if (damage.degree && damage.boat && damage.description && damage.reporter) {
 	 $scope.damagesnewstatus="OK";

@@ -470,12 +470,16 @@ angular.module('myApp.database.database-services', []).service('DatabaseService'
   };
 
   this.fixDamage = function(data) {
+    var fixed=$q.defer();
+    var res;
     $http.post('../../backend/fixdamage.php', data).success(function(data, status, headers, config) {
+        valid['boat']=false;
+        fixed.resolve(data);
     }).error(function(data, status, headers, config) {
-      alert("det mislykkedes at klarmelde skade "+status+" "+data);
+      alert("Serverfejl ved klarmelding af skade: Kode "+status+" "+data);
+      fixed.resolve({sucess: false, error: "Serverfejl ved klarmelding af skade: Kode "+status+" "+data})
     });
-    valid['boat']=false;
-    return 1;
+    return fixed.promise;
   };
 
   this.mergeArray = function (array1,array2) {

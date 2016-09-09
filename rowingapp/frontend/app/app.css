@@ -863,6 +863,10 @@ datetimepicker.ng-empty ng-form div input {
 .ng-pristine {
     background: white;
 }
+form.ng-pristine, ng-form.ng-pristine {
+    background: none;
+}
+
 .error {
     color: red;
     background:white;
@@ -962,4 +966,9 @@ datetimepicker.trip-search-field ng-form div input {
 
 .topsel i {
     color: black;
+}
+
+textarea.fixdamage-comment {
+    width: 96%;
+    height: 6em;
 }

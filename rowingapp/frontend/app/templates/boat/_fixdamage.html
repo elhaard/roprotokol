@@ -1,0 +1,47 @@
+  <div>
+    <ng-form name="fixDamage">
+
+    <div ng-show="fixdamage.action === 'edit' || fixdamage.action==='fix'">
+
+      <br/>
+      <b>{{fixdamage.action === 'fix' ? 'Klarmeld' : 'Rediger'}} skade på {{fixdamage.boat}}</b>
+      <br/>
+      Oprettet den {{fixdamage.created| txttotime | date:"d. MMM yyyy"}}<br/>
+
+      <div ng-if="fixdamage.action==='fix'">
+        <i>{{fixdamage.description}}</i>
+      </div>
+
+      <input placeholder="Skriv dit navn her" autocomplete="off" id="fixer" name="fixer" type="text" ng-model="fixdamage.fixer" typeahead-min-length="3" uib-typeahead="rower as rower.name for rower in getRowerByName($viewValue)" typeahead-template-url="reporterTemplate.html" required />
+      <br />
+
+      <span ng-if="fixdamage.action==='edit'">
+      Grad:
+         <select name="degree" ng-model="fixdamage.degree">
+             <option value="1">1 let</option>
+             <option value="2">2 middel</option>
+             <option value="3">3 svær</option>
+             <option value="4">4 Vedligehold</option>
+          </select>
+          <br/>
+      </span>
+
+      <textarea placeholder="{{(fixdamage.action==='fix')?'Evt. klarmeldings-kommentar':'Beskrivelse'}}" autocomplete="off" id="fixdamage.comment" name="comment" type="text" ng-model="fixdamage.comment" class="fixdamage-comment"></textarea>
+      <br/>
+
+    </div>
+    </ng-form>
+    <div class="modal-footer">
+    {{fixdamage.errormsg || 'No error'}}
+      <div ng-show="fixdamage.errormsg" class="error">{{fixdamage.errormsg}}</div>
+      <button ng-if="fixdamage.action==='fix'" class="klar"
+              ng-disabled="!(fixdamage.fixer && fixdamage.fixer.id && fixdamage.boat_id)" id="fixdamage_button"
+              ng-click="fixdamage.submit()">
+                <i class="fa fa-thumbs-up"></i>Klarmeld skade </button>
+      <button ng-if="fixdamage.action==='edit'" class="klar"
+              ng-disabled="!(fixdamage.fixer && fixdamage.fixer.id && fixdamage.boat_id && fixdamage.degree && fixdamage.comment)"
+               id="commentdamage_button" ng-click="fixdamage.submit()">
+          <i class="fa fa-comment"></i>Gem ændringer </button>
+      <button class="btn btn-warning" type="button" ng-click="fixdamage.cancel()">Fortryd</button>
+    </div>
+ </div>

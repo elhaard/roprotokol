@@ -174,7 +174,8 @@
             <tr><td>
                 <button confirm-if="rightsmessage" confirm="{{rightsmessage}}. Vil du alligevel udskrive båden?"
                         confirm-ok="Udskriv båd"
-                        confirm-cancel="fortryd"
+                        confirm-cancel="Fortryd"
+                        confirm-title="Bemærk!"
                         id="createtrip_button"
                         class="big"
                         ng-if="checkout.distance >0 && checkout.starttime &&checkout.boat && checkout.triptype && checkout.destination.name && validRowers() && (checkout.comments || checkout.destination.name!='Øvrige [Skriv i kommentar]')"
