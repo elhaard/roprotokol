@@ -21,7 +21,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     },this);
     return diffs;
   }
-  
+
   $scope.rowerkm_force_email = false;
   $scope.rowerkm_include_trips = true;
   $scope.rowerkm_separate_instruction = false;
@@ -43,7 +43,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     }
     return res;
   };
-  
+
   $scope.dateOptions = {
     showWeeks: false,
     formatDay:"d",
@@ -51,7 +51,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     formatMonth: 'MMM',
     title:"dato"
   };
-  
+
   $scope.weekdays=[
     {id:0,day:"-"},
     {id:1,day:"mandag"},
@@ -62,12 +62,12 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     {id:6,day:"lørdag"},
     {id:7,day:"søndag"}
   ];
-  
+
   $scope.reservations=[];
   $scope.reservation={};
   $scope.errortrips=[];
   $scope.trip={};
-  
+
   DatabaseService.init({"boat":true,"member":true, "trip":true,"reservation":true}).then(function () {
     $scope.currentrower=null;
     $scope.do="events";
@@ -86,7 +86,6 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     $scope.levels=DatabaseService.getDB('boatlevels');
     $scope.brands=DatabaseService.getDB('boat_brand');
     $scope.usages=DatabaseService.getDB('boat_usages');
-    $scope.placementlevels=[0,1,2];
     $scope.config={'headers':{'XROWING-CLIENT':'ROPROTOKOL'}};
     $scope.ziperrors=[];
     $scope.getTriptypeWithID=DatabaseService.getTriptypeWithID;
@@ -96,14 +95,14 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     // for (var a=0;a<num_aisles;a++) {
     //   mainplan[a]=[];
     //   for (var r=0;r<num_rows;r++) {
-    
+
     //   }
     // }
-    
+
     // for (var b=0;b<$scope.allboats.length;b++ ) {
-    
+
     // }
-    
+
     var i=0;
     while (i < $scope.errortrips.length -1) {
       while ($scope.errortrips[i].id && i < $scope.errortrips.length-1) {
@@ -128,7 +127,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
       $route.reload();
       alert("du skal logge ind");
     }
-    
+
     $scope.getRowerByName = function (val) {
       return DatabaseService.getRowersByNameOrId(val, undefined);
     };
@@ -150,7 +149,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
         if (status.status=="ok") {
           $scope.DB('boat_brand').push(bb);
         }
-      });              
+      });
     }
 
     $scope.create_triptype = function(tt) {
@@ -186,7 +185,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
             $scope.usages.push(newusage.newusage);
             usage.name="";
             usage.description="";
-          }                  
+          }
         }
       );
     }
@@ -226,17 +225,17 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     $scope.retire_boat = function(boat,ix) {
       var exeres=DatabaseService.updateDB('retire_boat',boat,$scope.config,$scope.errorhandler).then(function(status) {
         if (status.status=="ok") {
-          $scope.allboats.splice(ix,1);              
+          $scope.allboats.splice(ix,1);
         }
-      });                            
+      });
     }
-    
+
     $scope.create_boat = function(boat) {
       var exeres=DatabaseService.updateDB('create_boat',boat,$scope.config,$scope.errorhandler).then(function(status) {
         if (status.status=="ok") {
           $scope.allboats.push(boat);
         }
-      });                            
+      });
     }
 
     $scope.set_client_name =function(name) {
@@ -251,25 +250,25 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
         if (status.status=="ok") {
           $scope.currentrower.rights.push(right);
         }
-      });                            
+      });
     }
-    
+
     $scope.remove_rower_right = function(right,rower,ix) {
       var data={'right':right,'rower':rower}
       var exeres=DatabaseService.updateDB('remove_rower_right',data,$scope.config,$scope.errorhandler).then(function(status) {
         if (status.status=="ok") {
-          $scope.currentrower.rights.splice(ix,1);                                  
+          $scope.currentrower.rights.splice(ix,1);
         }
-      });              
+      });
     }
-    
+
     $scope.remove_boattype_requirement = function(rt,ix) {
       var data={boattype:$scope.currentboattype,'right':rt};
       var exeres=DatabaseService.updateDB('remove_boattype_right',data,$scope.config,$scope.errorhandler).then(function(status) {
         if (status.status=="ok") {
           $scope.requiredboatrights.splice(ix,1);
         }
-      });              
+      });
     }
 
     $scope.add_boattype_requirement = function(data,existing_rights) {
@@ -287,9 +286,9 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
         if (status.status=="ok") {
           delete $scope.requiredtriprights.splice(ix,1);
         }
-      });                            
+      });
     }
-    
+
     $scope.add_triptype_requirement = function(data) {
       data.triptype=$scope.currenttriptype;
       $scope.requiredtriprights.push({"requirement":data.right, "required":data.subject});
@@ -297,28 +296,28 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
         if (status.status=="ok") {
           $scope.trip.newright.right=null;
         }
-      });              
+      });
     }
 
     $scope.approve_correction = function(data,ix) {
       var exeres=DatabaseService.updateDB('approve_correction',data,$scope.config,$scope.errorhandler).then(function(status) {
         if (status.status=="ok") {
-          $scope.ziperrors.splice(ix,1);                            
+          $scope.ziperrors.splice(ix,1);
         }
-      });              
+      });
     }
-    
+
     $scope.reject_correction = function(data,ix) {
       var exeres=DatabaseService.updateDB('reject_correction',data,$scope.config,$scope.errorhandler).then(function(status) {
         if (status.status=="ok") {
-          $scope.ziperrors.splice(ix,1);              
+          $scope.ziperrors.splice(ix,1);
         }
-      });              
+      });
     }
-    
+
     $scope.boatcat2dk=DatabaseService.boatcat2dk;
     $scope.rightsubjects=['cox','all','any','none'];
-    
+
     $scope.rowerconvert = function (fromrower,torower) {
       if (fromrower && torower) {
         if (fromrower.id != torower.id) {
@@ -331,7 +330,7 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
             });
         } else {
           alert("roerne skal være forskellige");
-        }	
+        }
       } else {
         alert("begge roere skal være valgt");
       }
@@ -363,11 +362,11 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
         return true;
       }
     }
-    
+
     $scope.make_reservation = function (reservation){
       var r=angular.copy(reservation);
       r.start_time=$filter('date')(reservation.start_time,"HH:mm");
-      
+
       //r.start_time=reservation.start_time.getHours()+":"+reservation.start_time.getMinutes();
       r.end_time=reservation.end_time.getHours()+":"+reservation.end_time.getMinutes();
       if (r.end_date) {
@@ -376,13 +375,13 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
       if (r.start_date) {
         r.start_date=DatabaseService.toIsoDate(reservation.start_date);
       }
-      
+
       var exeres=DatabaseService.updateDB('make_reservation',r,$scope.config,$scope.errorhandler).then(
         function(newreservation) {
           if (newreservation.status=="ok") {
             $log.info("reservation made");
-            $scope.reservations.push(r);                    
-          }                  
+            $scope.reservations.push(r);
+          }
         }
       )            }
 
@@ -393,11 +392,11 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
         function(res) {
           if (res.status=="ok") {
             $log.info("reservation canceled");
-            $scope.reservations.splice(ix,1);                                  
-          }                  
+            $scope.reservations.splice(ix,1);
+          }
         }
       )            }
-    
+
     $scope.dotriprights = function (rr,tt) {
       if (rr && rr.length==0) { // Hack, must be due to PHP json marshalling
         $scope.requiredtriprights={};
@@ -410,7 +409,6 @@ function AdminCtrl ($scope, DatabaseService, NgTableParams, $filter,$route,$conf
     $scope.dotripactive = function (tt) {
       var exeres=DatabaseService.updateDB('activate_triptype',tt,$scope.config,$scope.errorhandler);
     }
-    
+
   }                                                                                        )
 }
-

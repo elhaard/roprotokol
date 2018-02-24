@@ -14,10 +14,7 @@ CREATE TABLE Boat (
   boat_usage int(11),
   level int(11),
   Location varchar(100),
-  placement_aisle INT, -- doors in DSR, Containers from left in Nordhavn
-  placement_row INT, -- 1 is toward port, 2 is torwards Strandvænget
-  placement_level INT, -- 0=ground, 1 .. shelves
-  placement_side Char(6), -- -left, right,center
+  placement INT(10) UNSIGNED,
   Decommissioned datetime,
   PRIMARY KEY (id)
 );
@@ -166,7 +163,108 @@ CREATE TABLE Locations (
   lon                DOUBLE,
   description varchar(100),
   PRIMARY KEY (`name`)
-);
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS Placement_BoatType;
+DROP TABLE IF EXISTS PlacementSlot;
+DROP TABLE IF EXISTS PlacementRowConfiguration;
+DROP TABLE IF EXISTS PlacementRow;
+DROP TABLE IF EXISTS PlacementSide;
+DROP TABLE IF EXISTS PlacementAisle;
+CREATE TABLE PlacementAisle (
+  id                 int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  location           varchar(30) NOT NULL,
+  `name`             varchar(255),
+  `order`            int(11),
+  CONSTRAINT `PlacementAisle_fk1`
+     FOREIGN KEY (`location`) REFERENCES `Locations` (`name`)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE PlacementSide (
+  id                 int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  aisle              int(10) unsigned NOT NULL,
+  `name`             varchar(255),
+  `order`            int(11),
+  CONSTRAINT `PlacementSide_fk1`
+     FOREIGN KEY (`aisle`) REFERENCES `PlacementAisle` (`id`)
+     ON DELETE CASCADE
+     ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE PlacementRow (
+  id                 int(10) unsigned NOT NULL AUTO_INCREMENT,
+  side               int(10) unsigned NOT NULL,
+  level              int(10) unsigned, -- 0=ground, 1 .. shelves
+  `name`             varchar(255),
+  `order`            int(11),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `PlacementRow_fk1`
+     FOREIGN KEY (`side`) REFERENCES `PlacementSide` (`id`)
+     ON UPDATE CASCADE
+     ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+CREATE TABLE PlacementRowConfiguration (
+  id                 int(10) unsigned NOT NULL AUTO_INCREMENT,
+  row                int(10) unsigned,
+  `text`             varchar(255),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `PlacementRowConfiguration_fk1`
+    FOREIGN KEY (`row`) REFERENCES `PlacementRow` (`id`)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE PlacementSlot (
+  id                 int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `order`            int(10) unsigned, -- 1 is toward port
+  size               int(10) unsigned, -- meters, for visual representation only
+  configuration      int(10) unsigned,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `Placement_fk1`
+    FOREIGN KEY (`configuration`) REFERENCES `PlacementRowConfiguration` (`id`)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE Placement_BoatType (
+  slot               int(10) unsigned,
+  boatType           int(11),
+  PRIMARY KEY (`slot`, `boatType`),
+  CONSTRAINT `Placement_BoatType_fk1`
+    FOREIGN KEY (`slot`) REFERENCES `PlacementSlot` (`id`)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT `Placement_BoatType_fk2`
+    FOREIGN KEY (`boatType`) REFERENCES `BoatType` (`id`)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+CREATE OR REPLACE VIEW Placement (
+  id,
+  row,
+  `column`,
+  level,
+  side,
+  aisle,
+  location
+) AS SELECT s.id,
+            r.name,
+            s.order,
+            r.level,
+            si.name,
+            a.name,
+            a.location
+     FROM PlacementSlot s
+     JOIN PlacementRowConfiguration c ON s.configuration = c.id
+     JOIN PlacementRow r ON c.row = r.id
+     JOIN PlacementSide si ON r.side = si.id
+     JOIN PlacementAisle a ON si.aisle = a.id
 
 
 DROP TABLE IF EXISTS Member;
@@ -330,14 +428,14 @@ CREATE TABLE event_log (
 
 DROP TABLE IF EXISTS tblMembersToRoprotokol;
 CREATE TABLE tblMembersToRoprotokol (
-  MemberID           INT, 
-  LastName           Text (50), 
-  FirstName          Text (50), 
-  E_mail             Text (100), 
-  MemberType         Integer, 
-  JoinDate           DateTime, 
-  RemoveDate         DateTime, 
-  OnAddressList      Boolean NOT NULL, 
+  MemberID           INT,
+  LastName           Text (50),
+  FirstName          Text (50),
+  E_mail             Text (100),
+  MemberType         Integer,
+  JoinDate           DateTime,
+  RemoveDate         DateTime,
+  OnAddressList      Boolean NOT NULL,
   Danish             Boolean NOT NULL
 );
 
@@ -464,7 +562,7 @@ CREATE INDEX membername ON Member(FirstName,LastName);
 
 -- Styrmandinstruktion
 CREATE TABLE instruction_team (
-  name            VARCHAR(30) PRIMARY KEY, 
+  name            VARCHAR(30) PRIMARY KEY,
   description      VARCHAR(2000),
   instructor      INTEGER,
   FOREIGN KEY (instructor) REFERENCES Member(id)
@@ -492,7 +590,7 @@ CREATE TABLE team_requests (
   preferred_intensity   varchar(300),
   comment               varchar(5000),
   phone                 varchar(40),
-  email                 varchar(500),    
+  email                 varchar(500),
   FOREIGN KEY (member_id) REFERENCES Member(id)
 
 );
@@ -532,10 +630,10 @@ CREATE TABLE authentication (
 CREATE TABLE cox_log (
   timestamp             DATETIME,
   member_id           VARCHAR(10),
-  action              VARCHAR(255),                      
+  action              VARCHAR(255),
  entry               VARCHAR(20000) NOT NULL
  );
-  
+
 
 --INSERT INTO authentication(6270,"hest","coxaspirant");
 
@@ -556,7 +654,7 @@ CREATE TABLE event (
   id                     INTEGER  NOT NULL AUTO_INCREMENT,
   owner                  INTEGER,
   auto_administer        BOOLEAN default false,
-  boat_category          INTGER,
+  boat_category          INTEGER,
   boats                  VARCHAR(255),
   start_time             DATETIME,
   end_time               DATETIME,
@@ -572,7 +670,8 @@ CREATE TABLE event (
   category               VARCHAR(255),
   preferred_intensity    VARCHAR(300),
   comment                VARCHAR(5000),
-  FOREIGN KEY (owner) REFERENCES Member(id), 
+  FOREIGN KEY (owner) REFERENCES Member(id),
+  FOREIGN KEY (boat_category) REFERENCES BoatCategory(id),
   FOREIGN KEY (trip_type) REFERENCES TripType(id),
   PRIMARY KEY(id)
 );
@@ -582,7 +681,7 @@ CREATE TABLE event_role (
   description VARCHAR(5000),
   can_post   BOOLEAN,
   is_leader  BOOLEAN,
-  is_cox     BOOLEAN  
+  is_cox     BOOLEAN
 );
 
 INSERT INTO event_role (name, description,can_post,is_leader,is_cox) VALUE ('member','deltager',1,0,0);
@@ -745,8 +844,8 @@ CREATE TABLE weekday (
   no   INTEGER,
   language CHAR(2)
   );
-  
-INSERT INTO weekday (name,no,language) VALUES 
+
+INSERT INTO weekday (name,no,language) VALUES
   ("Mandag","1","da"),
   ("Tirsdag","2","da"),
   ("Onsdag","3","da"),
@@ -763,7 +862,7 @@ CREATE TABLE season (
 );
 
 DELETE FROM season;
-INSERT INTO season (season,summer_start,summer_end) VALUES 
+INSERT INTO season (season,summer_start,summer_end) VALUES
  (2006,"2006-03-26","2006-10-29"),
  (2007,"2007-03-25","2007-10-28"),
  (2008,"2008-03-30","2008-10-26"),

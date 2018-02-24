@@ -11,7 +11,7 @@
   <ul>
     <li ng-repeat="boatcategory in boatcategories" ng-class="{selected: boatcategory == selectedBoatCategory}" ng-click="selectBoatCategory(boatcategory)">{{boatcategory.name}}</li>
     <li ng-click="selectedBoatCategory=null">Alle bådtyper</li>
-  </ul>   
+  </ul>
 </div>
 
 <script type="text/ng-template" id="boatTemplate.html">
@@ -42,26 +42,24 @@
     </thead>
     <tbody>
       <tr ng-repeat="boat in allboats | filter: matchBoatId(selectedboat,true)" ng-model="item"
-	  ng-class="{selected: boat == selectedboat}" 
+	  ng-class="{selected: boat == selectedboat}"
 	  ng-class-odd="'oddboat'" ng-class-even="'evenboat'" >
         <td ><div>
 	    {{boat.name}}
 	  </div>
 	</td>
 	<td>{{boat.category}}</td>
-        <td>{{boat.location|nodsr}} <i uib-tooltip="på hylde" ng-show="boat.placement_level" class="fa fa-level-up"></i> <small uib-tooltip="port {{boat.placement_aisle}}" ng-show="boat.placement_aisle">p{{boat.placement_aisle}}</small>
+        <td>{{boat.location|nodsr}} <i uib-tooltip="{{boat.placement_row}" ng-show="boat.placement_level" class="fa fa-level-up"></i> <small uib-tooltip="{{boat.placement_aisle}}" ng-show="boat.placement_aisle">{{boat.placement_aisle}}</small>
         </td>
         <td ng-click="damagesForBoat=boat">
-          <span ng-show="{{boat.damage==3}}">Svært skadet</span>
-          <span ng-show="{{boat.damage==2}}">Middel skadet</span>
-          <span ng-show="{{boat.damage==1}}">Let skadet</span>
-	</td>        
+          <span ng-show="{{boat.damage}}">{{boat.damage|damage2dk}}</span>
+	      </td>
         <td ng-click="checkin.update_destination_for=boat">
        <i class="fa fa-pencil"></i>
           {{boat.destination}}
         </td>
 	<td ng-class="{datealert: critical_time(boat.expected_in)}">{{boat.expected_in| txttotime | date :"HH:mm d. MMM"}}</td>
-        
+
 	<td class="rnum" ng-bind-html="boat.meter|mtokm">km</td>
 	<td class="colinput">
 	  <input  autocomplete="off" min="0.1" step="0.1" maxlength="4" size="3" ng-model="boat.corrected_distance" class="ui-select-bootstrap" onlynumber type="text" transformkm
@@ -70,7 +68,7 @@
 
 	<td class="colinput">
 	  <input  autocomplete="off" maxlength="200" size="3" ng-model="boat.comment" class="tripcomment" type="text" name="tripcomments"></input>
-	</td>        
+	</td>
 	<td class="colinput">
           <div class="checkinactions">
 	    <button uib-tooltip="indskriv turen" ng-click="closetrip(boat,$index,item.km)" class="big"
@@ -89,7 +87,7 @@
               </button>
             </a>
           </div>
-	</td>	  
+	</td>
         </tr>
     </tbody>
   </table>

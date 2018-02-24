@@ -6,16 +6,15 @@ $error=null;
 $res=array ("status" => "ok");
 $data = file_get_contents("php://input");
 $data=json_decode($data);
-error_log("set row ".json_encode($data));
 
 $rodb->begin_transaction();
 
-if ($stmt = $rodb->prepare("UPDATE Boat set placement_row=? Where id=?")) { 
-    $stmt->bind_param('ii', $data->placement_row,$data->id);
+if ($stmt = $rodb->prepare("UPDATE Boat set placement=? Where id=?")) {
+    $stmt->bind_param('ii', $data->placement,$data->id);
     $stmt->execute();
-} 
+}
 $rodb->commit();
 $rodb->close();
 invalidate('boat');
 echo json_encode($res);
-?> 
+?>

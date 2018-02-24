@@ -1,0 +1,885 @@
+{ "aisles":
+[
+  { "name": "Port 1",
+    "location": "DSR",
+    "order": 1,
+    "sides": [
+      {
+        "name": "Bagbord",
+        "order": 1,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ],
+               [
+                  [3]
+               ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Midt",
+        "order": 2,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Loft",
+            "level": 4,
+            "order": 2,
+            "configurations": [
+               [
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20],
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20]
+               ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Styrbord",
+        "order": 3,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  { "name": "Port 2",
+    "location": "DSR",
+    "order": 2,
+    "sides": [
+      {
+        "name": "Bagbord",
+        "order": 4,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ],
+               [
+                  [3]
+               ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Midt",
+        "order": 5,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Loft",
+            "level": 4,
+            "order": 2,
+            "configurations": [
+               [
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20],
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20]
+               ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Styrbord",
+        "order": 6,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  { "name": "Port 3",
+    "location": "DSR",
+    "order": 3,
+    "sides": [
+      {
+        "name": "Bagbord",
+        "order": 7,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ],
+               [
+                  [3]
+               ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Midt",
+        "order": 8,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Loft",
+            "level": 4,
+            "order": 2,
+            "configurations": [
+               [
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20],
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20]
+               ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Styrbord",
+        "order": 9,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  { "name": "Port 4",
+    "location": "DSR",
+    "order": 4,
+    "sides": [
+      {
+        "name": "Bagbord",
+        "order": 10,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ],
+               [
+                  [3]
+               ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Midt",
+        "order": 11,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Loft",
+            "level": 4,
+            "order": 2,
+            "configurations": [
+               [
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20],
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20]
+               ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Styrbord",
+        "order": 12,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  { "name": "Port 5",
+    "location": "DSR",
+    "order": 5,
+    "sides": [
+      {
+        "name": "Bagbord",
+        "order": 13,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ],
+               [
+                  [3]
+               ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Midt",
+        "order": 14,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Loft",
+            "level": 4,
+            "order": 2,
+            "configurations": [
+               [
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20],
+                 [4, 5, 6, 7, 12, 17, 18, 19, 20]
+               ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Styrbord",
+        "order": 15,
+        "rows": [
+          {
+            "name": "Gulv",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18],
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ],
+              [
+                [3]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [1, 8, 17, 18],
+                [1, 2, 8, 10, 11, 17, 18]
+              ],
+              [
+                [2, 10, 11],
+                [1, 8, 17, 18]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+
+  { "name": "Forpost inderste container",
+    "location": "Nordhavn",
+    "order": 6,
+    "sides": [
+      {
+        "name": "Bådside",
+        "order": 16,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ]
+            ]
+          },
+          {
+            "name": "Hejs",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Kajakstativ",
+        "order": 17,
+        "rows": [
+          {
+            "name": "Hylde 1",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 3",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 4",
+            "level": 3,
+            "order": 4,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  { "name": "Forpost yderste container",
+    "location": "Nordhavn",
+    "order": 7,
+    "sides": [
+      {
+        "name": "Bådside",
+        "order": 18,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                  [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+               ]
+            ]
+          },
+          {
+            "name": "Hejs",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [1, 2, 8, 9, 10, 11, 12, 13, 16, 17, 18]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Kajakstativ",
+        "order": 19,
+        "rows": [
+          {
+            "name": "Hylde 1",
+            "level": 0,
+            "order": 1,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 2",
+            "level": 1,
+            "order": 2,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 3",
+            "level": 2,
+            "order": 3,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          },
+          {
+            "name": "Hylde 4",
+            "level": 3,
+            "order": 4,
+            "configurations": [
+              [
+                [4, 5, 6, 7, 20]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+
+  { "name": "Værftet",
+    "location": "Værft",
+    "order": 20,
+    "sides": [
+      {
+        "name": "Midt",
+        "order": 20,
+         "rows": [
+           {
+             "name": "Gulv",
+             "level": 0,
+             "order": 3,
+             "configurations": [
+               [
+                 [1, 8, 17, 18],
+                 [1, 2, 8, 10, 11, 17, 18]
+               ],
+               [
+                 [2, 10, 11],
+                 [1, 8, 17, 18]
+               ],
+               [
+                  [16]
+               ]
+            ]
+          }
+        ]
+      }
+    ]
+  }
+
+]
+}
