@@ -25,14 +25,12 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
   };
 
   $scope.newdamage={};
-
-  DatabaseService.init({"stats":false, "boat":true, "member":true, "trip":true, "reservation":true}).then(function () {
+  $scope.boattype=null;
+  DatabaseService.init({"status":true,"stats":false, "boat":true, "member":true, "trip":true, "reservation":true}).then(function () {
     // Load Category Overview
-    $scope.current_user=DatabaseService.getDB('current_user');
-    if ($scope.current_user) {
-       $scope.newdamage.reporter=DatabaseService.getRowerByMemberId($scope.current_user);
-    }
+    $scope.newdamage.reporter=DatabaseService.getCurrentRower();
     $scope.boatcategories = DatabaseService.getBoatTypes();
+    $scope.sculler_open=DatabaseService.getDB('status').sculler_open;
     // Load selected boats based on boat category
     $scope.reservations = DatabaseService.getDB('get_reservations');
     $scope.checkin={update_destination_for:null};
@@ -140,10 +138,13 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
   var has_right = function(required_right,arg,rightlist) {
     for (var ri=0; ri<rightlist.length; ri++) {
       // DSR Hack here
-      if ( (rightlist[ri].member_right==required_right ||
-            (required_right=="svava" && rightlist[ri].member_right=="sculler"))
-           && (!arg || !rightlist[ri].arg || arg==rightlist[ri].arg)) {
-        return true;
+      if (
+        (rightlist[ri].member_right==required_right || (required_right=="svava" && rightlist[ri].member_right=="sculler"))
+          && (!arg || !rightlist[ri].arg || arg==rightlist[ri].arg)
+      ) {
+        if (!$scope.sculler_open || rightlist[ri].arg!='sommer') {
+          return true;
+        }
       }
     }
     return false;
@@ -175,28 +176,28 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
     angular.forEach(reqs, function(r,k) {
       var rq=r.required_right;
       var subject=r.requirement;
-      // console.log("check right "+rq);
+      var arg=rq=='instructor'?subright:null;
       if (rq == null) {
-        // Skip, we are waiting for Mysql Json AGG
-      } else if (subject='cox') {
+        // Skip, we are waiting for Mysql Json AGG in MariaDB 10.3
+      } else if (subject=='cox') {
         if ($scope.checkout.rowers[0] && $scope.checkout.rowers[0].rights)  {
-          if (!(has_right(rq,subright,$scope.checkout.rowers[0].rights))) {
-            norights.push("styrmand "+$scope.checkout.rowers[0].name+" har ikke "+ $filter('righttodk')([rq]));
+          if (!(has_right(rq,arg,$scope.checkout.rowers[0].rights))) {
+            norights.push("styrmand "+$scope.checkout.rowers[0].name+" Har ikke "+ $filter('righttodk')([rq]));
           }
         }
-      } else if (subject='all') {
+      } else if (subject=='all') {
         for (var ri=0; ri < $scope.checkout.rowers.length; ri++) {
-          if (checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
-            if (!(has_right(rq,subright,$scope.checkout.rowers[ri].rights))) {
-	      norights.push($scope.checkout.rowers[ri].name +" har ikke "+$filter('righttodk')([rq]));
+          if ($scope.checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
+            if (!(has_right(rq,arg,$scope.checkout.rowers[ri].rights))) {
+	      norights.push($scope.checkout.rowers[ri].name +" har Ikke "+$filter('righttodk')([rq]));
             }
           }
         }
-      } else if (rq='any') {
+      } else if (subject=='any') {
         var ok=false;
         for (var ri=0; ri < $scope.checkout.rowers.length; ri++) {
-          if (checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
-            if (!(has_right(rq,subright,$scope.checkout.rowers[ri].rights))) {
+          if ($scope.checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
+            if ((has_right(rq,arg,$scope.checkout.rowers[ri].rights))) {
 	      ok=true;
             }
           }
@@ -204,17 +205,17 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
         if (!ok) {
           norights.push(" der skal være mindst een roer med "+ $filter('righttodk')([rq]));
         }
-      } else if (rq='none') {
+      } else if (subject=='none') {
         var ok=true;
         for (var ri=0; ri < $scope.checkout.rowers.length; ri++) {
-          if (checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
-            if (!(has_right(rq,subright,$scope.checkout.rowers[ri].rights))) {
+          if ($scope.checkout.rowers[ri] && $scope.checkout.rowers[ri].rights) {
+            if (has_right(rq,arg,$scope.checkout.rowers[ri].rights)) {
 	      ok=false;
             }
           }
         }
         if (!ok) {
-          norights.push(" der må ikke være nogen "+rq+" i båden");
+          norights.push(" der må ikke være nogen "+$filter('righttodk')([rq])+" i båden");
         }
       }   
     },vm);
@@ -309,6 +310,12 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
       return (matchboat.id && (boat==null || matchboat.boat_id==boat.id));
     }
   };
+
+  $scope.matchBoatAndType = function(boat,boattype) {
+    return function(matchboat) {
+      return (matchboat.id && (boat==null || matchboat.boat_id==boat.id) && (!boattype || matchboat.boattype==boattype.name));
+    }
+  };
   
   $scope.matchBoatId = function(boat,onwater) {
     return function(matchboat) {
@@ -322,6 +329,15 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
     var result = bts
         .filter(function(element) {
           return (element['name'].toLowerCase().indexOf(vv.toLowerCase()) == 0);
+        });
+    return result;
+  };
+
+  $scope.getMatchingBoatsWithType = function (vv,boattype) {
+    var bts=DatabaseService.getBoats();
+    var result = bts
+        .filter(function(boat) {
+          return ( boat['name'].toLowerCase().indexOf(vv.toLowerCase()) == 0  && (!boattype || boattype.name==boat.category));
         });
     return result;
   };
@@ -375,11 +391,7 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
       }
       if (DatabaseService.fixDamage(data)) {
         damagelist.splice(damagelist.indexOf(bd),1);
-	  if ($scope.current_user) {
-	      $scope.newdamage.reporter=DatabaseService.getRowerByMemberId($scope.current_user);
-	  } else {
-	      $scope.newdamage.reporter=null;
-          }
+	$scope.newdamage.reporter=DatabaseService.getCurrentRower();
         $scope.allboatdamages = DatabaseService.getDamages();
         $scope.damagesnewstatus="klarmeldt";
       } else {
@@ -398,12 +410,8 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
         function(data) {
           if (data.status=="ok") {
             $scope.allboatdamages.splice(0,0,data.damage);
-              $scope.newdamage={};
-	      if ($scope.current_user) {
-		  $scope.newdamage.reporter=DatabaseService.getRowerByMemberId($scope.current_user);
-	      } else {
-		  $scope.newdamage.reporter=null;
-              }
+            $scope.newdamage={};
+	    $scope.newdamage.reporter=DatabaseService.getCurrentRower();
           }
         }
       )
@@ -486,7 +494,7 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
         $scope.checkinmessage=status.boat+" er nu ledig, turen er slettet";
         $scope.checkin.boat=null;
       } else {
-        console.log("error "+status.message);
+        $log.error("error "+status.message);
         $scope.checkoutmessage="Fejl: "+closetrip;
       };
     }
@@ -510,9 +518,9 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
         
       } else if (status.status =='error' && status.error=="notonwater") {
         $scope.checkinmessage= status.boat+" var allerede skrevet ind";
-        console.log("not on water")
+        $log.debug("not on water")
       } else {
-        console.log("error "+status.message);
+        $log.error("error "+status.message);
         $scope.checkoutmessage="Fejl: "+closetrip;
       };
     }
@@ -558,8 +566,10 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
         // TODO: clear
       } else if (status.status =='error' && status.error=="already on water") {
         $scope.checkouterrormessage = $scope.checkout.boat.name + " er allerede udskrevet, vælg en anden båd";
+      } else if (status.status =='error' && status.error=="rower already on water") {
+        $scope.checkouterrormessage = $scope.checkout.boat.name + " er allerede udskrevet, vælg en anden båd";
       } else {
-        $scope.checkoutmessage="Fejl: "+JSON.stringify(newtrip);
+        $scope.checkouterrormessage="Fejl: "+status.error;
         // TODO: give error that we could not save the trip
       };
     },function() {alert("error")}, function() {alert("notify")}
@@ -574,16 +584,15 @@ function BoatCtrl ($scope, $routeParams, DatabaseService, $filter, ngDialog,$log
       $scope.updateExpectedTime();
     }
     var ds=DatabaseService.reload(['boat'])
-    console.log(" boatsync ds="+ds);
     if (ds) {
       ds.then(function(what) {
         if ($scope.selectedBoatCategory) {
           $scope.selectedboats = DatabaseService.getBoatsWithCategoryName($scope.selectedBoatCategory.name);
           if ($scope.checkout.boat) {
-            console.log("update selected boats");
+            $log.debug("update selected boats");
             $scope.checkout.boat=DatabaseService.getBoatWithId($scope.checkout.boat.id);
             if ($scope.checkout.boat.trip) {
-	      console.log("selected boat was taken");
+	      $log.debug("selected boat was taken");
 	      $scope.checkouterrormessage="For sent: "+$scope.checkout.boat.name+" blev taget";
 	      $scope.checkout.boat.trip=null;
 	      $scope.checkout.boat=null;

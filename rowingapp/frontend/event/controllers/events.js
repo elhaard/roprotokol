@@ -236,6 +236,9 @@ function eventCtrl ($scope, $routeParams,$route,DatabaseService, LoginService, $
       } else if (status.status =='warning') {
         alert("Advarsel: "+status.message);
         $scope.init();
+      } else if (status.status =='error') {
+        alert("Fejl: "+status.message);
+        $scope.init();
       } else {
         alert("Fejl: "+status.message);
       }
@@ -254,7 +257,20 @@ function eventCtrl ($scope, $routeParams,$route,DatabaseService, LoginService, $
       }
     });
   }
-  
+
+  $scope.set_event_openness = function(event) {
+    var sr=DatabaseService.createSubmit("set_event_openness",event);
+    sr.promise.then(function(status) {
+      if (status.status !='ok') {
+        if (status.status =='warning') {
+          alert("advarsel: "+status.warning);
+        } else {
+          alert("fejl "+status.error);
+        }
+      }
+    });
+  }
+
 
   $scope.accept_event_participant = function(em) {
     em.event_id=$scope.currentevent.event_id;
@@ -297,7 +313,7 @@ function eventCtrl ($scope, $routeParams,$route,DatabaseService, LoginService, $
 
   
   $scope.is_event_member = function(event) {
-    if (!event || ! $scope.current_user) {
+    if (!event || !event.participants || ! $scope.current_user) {
       return false;
     }
     for (var i=0; i<event.participants.length; i++){
@@ -789,7 +805,7 @@ function eventCtrl ($scope, $routeParams,$route,DatabaseService, LoginService, $
         ) &&(
           !messagefilter ||
 	    message.subject.toLowerCase().indexOf(mf)>-1 ||
-	    message.sender.toLowerCase().indexOf(mf)>-1 ||
+	    (message.sender && message.sender.toLowerCase().indexOf(mf)>-1) ||
 	    message.body.toLowerCase().indexOf(mf)>-1
           )
       );

@@ -134,6 +134,7 @@ CREATE TABLE Error_Trip (
   Boat varchar(100),
   BoatID int(11) NOT NULL,
   TripTypeID int(11),
+  Comment varchar(1000),
   TimeOut datetime,
   TimeIn datetime,
   Destination varchar(100),
@@ -298,7 +299,7 @@ CREATE TABLE Member (
 DROP TABLE IF EXISTS MemberRightType;
 CREATE TABLE MemberRightType (
   member_right varchar(50) NOT NULL,
-  arg varchar(200),
+  arg varchar(200) NOT NULL DEFAULT "",
   description varchar(200),
   PRIMARY KEY (member_right,arg)
 );
@@ -306,8 +307,8 @@ CREATE TABLE MemberRightType (
 DROP TABLE IF EXISTS MemberRights;
 CREATE TABLE MemberRights (
   member_id int(11) NOT NULL,
-  MemberRight varchar(50) NOT NULL,
-  Acquired datetime NOT NULL,
+  MemberRight varchar(50) NOT NULL REFERENCES MemberRightType (member_right) ON DELETE CASCADE ON UPDATE CASCADE,
+  Acquired datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   argument varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (member_id,MemberRight,Acquired,argument)
 );
@@ -428,7 +429,7 @@ CREATE TABLE event_log (
 
 DROP TABLE IF EXISTS tblMembersToRoprotokol;
 CREATE TABLE tblMembersToRoprotokol (
-  MemberID           INT,
+  MemberID           varchar(10),
   LastName           Text (50),
   FirstName          Text (50),
   E_mail             Text (100),
@@ -545,6 +546,13 @@ CREATE TABLE Configuration (
 );
 
 INSERT INTO Configuration (id, value) VALUES ('db_version', '1');
+
+DROP TABLE IF EXISTS status;
+CREATE TABLE status (
+  sculler_open INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO status (sculler_open) VALUES (0);
+
 
 CREATE INDEX tripmembermemberix ON TripMember(member_id);
 
@@ -810,6 +818,7 @@ CREATE TABLE member_setting (
   show_status BOOLEAN NOT NULL DEFAULT FALSE,
   show_activities BOOLEAN NOT NULL DEFAULT FALSE,
   notification_email VARCHAR(255),
+  email_shared VARCHAR(255),
   phone VARCHAR(20),
   FOREIGN KEY (member) REFERENCES Member(id),
   PRIMARY KEY(member)
@@ -897,3 +906,6 @@ INSERT INTO season (season,summer_start,summer_end) VALUES
  (2037,"2037-03-29","2037-10-25"),
  (2038,"2038-03-28","2038-10-31"),
  (2039,"2039-03-27","2039-10-30");
+
+
+INSERT INTO Member (id,MemberId,FirstName,LastName) VALUES (-1,"baadhal","Bådhallen","DSR");

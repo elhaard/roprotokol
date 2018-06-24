@@ -1,6 +1,5 @@
 'use strict';
-angular.module('rowApp.database.database-services', []).service('DatabaseService', function($http, $q,$log) {
-
+function dbservice($http, $q, $log) {
   var valid={};
   var db={};
   var rowerstatistics=[];
@@ -122,6 +121,7 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
     this.getData('boat_brand',"",promises);
     this.getData('boat_usages',"",promises);    
     this.getData('rights_subtype',"",promises);
+    this.getData('status',"",promises);
     this.getData('stats/trip_stat_year',"",promises);
     
     if(!valid['memberrighttypes']) {
@@ -181,6 +181,7 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
   this.invalidate_dependencies=function(tp) {
     for (var di=0;cachedepend[tp] && di < cachedepend[tp].length;di++) {
       var subtp=cachedepend[tp][di];
+      $log.debug(' !v '+subtp);
       valid[subtp]=false;	    
     }
   };
@@ -207,6 +208,7 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
     };
         
     db.boatlevels={
+      0:'',
       1:'Let',
       2:'Mellem',
       3:'Svær',
@@ -214,9 +216,10 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
     }
     defaultLocation = 'DSR';
     cachedepend={
-      'admin':[,'memberrighttypes'],
-      'reservation':['reservation','boat'],
-      'boat':['boats','boatdamages','availableboats','reservations','boat_status','boat_usages','boat_status','get_events'],
+      'status':['status'],
+      'admin':['memberrighttypes','rights_subtype'],
+      'reservation':['reservation','boat','get_reservations'],
+      'boat':['boats','boatdamages','availableboats','boat_status','boat_usages','get_events'],
       'trip':['rowers', 'boats','errortrips','get_events','errortrips','boat_statistics','membertrips','onwater','rowertripsaggregated','tripmembers','tripstoday','triptypes'],
       'member':['boats','rowers','rower_statisticsany','rowerstatisticsanykayak','rowerstatisticsanyrowboat'],
       'destination':['destinations'],
@@ -237,8 +240,9 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
       db['current_user']=ds.uid;
       if (gitrevision != ds.gitrevision) {
         $log.info("new git revision " +gitrevision +" --> "+ ds.gitrevision);
-        window.location="/frontend/app/index.html";
-        //        window.location.reload();
+//        window.location="/frontend/app/index.shtml";
+        window.location.reload(true);
+	  // $angularCacheFactory.clearAll();
         //    var cache = $cacheFactory.get('$http');
         //    cache.removeAll();
         // $templateCache.removeAll();    
@@ -251,8 +255,8 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
           $log.log("  inval "+tp); // NEL
 	  dbservice.invalidate_dependencies(tp);
 	  doreload=true;
+	  datastatus[tp]=ds[tp];
 	}
-	datastatus[tp]=ds[tp];
       }
       if (doreload) {
 	$log.log(" do reload " + JSON.stringify(valid));
@@ -487,6 +491,11 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
     }
   }
 
+  this.getCurrentRower = function() {
+    if (!db['current_user']) return null;
+    return this.getRowerByMemberId(db['current_user']);
+  }
+
   this.getRowersByNameOrId = function(nameorid, preselectedids) {
     var val = nameorid.trim().toLowerCase();
     if (val.length<3 && isNaN(val)) {
@@ -534,6 +543,7 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
     datastatus['trip']=null;
     datastatus['boat']=null;
     datastatus['member']=null;
+    datastatus['status']=null;
     return qup.promise;
   }
   
@@ -612,5 +622,6 @@ angular.module('rowApp.database.database-services', []).service('DatabaseService
   this.valid = function() {
     return valid;
   }
+}
 
-});
+angular.module('rowApp.database.database-services', []).service('DatabaseService', ['$http','$q','$log',dbservice]);
